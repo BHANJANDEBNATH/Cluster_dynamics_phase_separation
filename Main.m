@@ -10,7 +10,7 @@ No_disks = 50;
 dia_disk = 5;     % in nm
 area_fraction = ((pi/4) * dia_disk^2 * No_disks) / (XX * YY);
 
-tau = 10^(-3);        % in seconds
+tau = 10^(-4);        % in seconds
 D_free_disk = 10^2;   % diffusivity in nm^2/s 
 
 %% initial configuration generation
@@ -43,8 +43,8 @@ disks_stat(:,2) = updated_coordinates(:,1);
 disks_stat(:,3) = updated_coordinates(:,2);
 
 % Bond lifetimes
-alpha = 0.5;          % range 0 to 1.5
-lambda = 0.1;         % 0.1 to 2
+alpha = 0.5;           % range 0 to 1.5
+lambda = 0.1;          % 0.1 to 2
 num_samples = 10000;   % Number of lifetimes to generate
 [lifetimes_power, lifetimes_exponential] = distribution_bond_lifetime(alpha, lambda, num_samples);
 
@@ -83,8 +83,8 @@ for i = 1:No_timesteps
         % tracking how many time steps are elapsed
         disp(['No. time steps elapsed:' num2str(i/tic)]);
     end
-
-    Plot_disks_colors(No_disks, dia_disk, disks_stat, XX, YY, bondpos)
+    
+   % Plot_disks_colors(No_disks, dia_disk, disks_stat, XX, YY, bondpos)
 
 end
 

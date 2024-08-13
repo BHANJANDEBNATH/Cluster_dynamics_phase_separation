@@ -5,7 +5,7 @@
 function [updated_disks_stat, clusters_ids] = BD_disks_bond_dynamics(No_disks,disks_stat, XX, YY, dia_disk, tau, D_free_disk, bond_form_prob, bondpos, bond_lifetime, bond_formtime, steps_lifetimes, curr_time, ncols)
 
 
-%% BD of isolated disks
+%% Brownian Dynamics of isolated disks
 for ii = 1:No_disks
     % if a disk is not bonded with any other disks, then update its position using BD
     if mean(disks_stat(ii, bondpos(1,1):bondpos(1,length(bondpos)))) == 0  
@@ -20,9 +20,9 @@ for ii = 1:No_disks
         % periodic BC 
         [new_pos_s] = BoundaryCondition_disks(new_pos_s, XX, YY);
 
-        % check for overlap with other disks (whether bonded or non-bonded)
+        % check for overlap with other disks who are either bonded or non-bonded
         sc =  disks_stat(:,2:3);
-        [condition] = overlap_check(id, new_pos_s, dia_disk, sc);
+        [condition] = overlap_check_isolated_disks(id, new_pos_s, dia_disk, sc, XX, YY);
 
         if mean(condition) == 0  
             disks_stat(id,2:3) = new_pos_s;
@@ -30,7 +30,7 @@ for ii = 1:No_disks
     end
 end
 
-%% bond formation among isolates disks and disks of clusters whose coordinates lie inside simulation box
+%% bond formation among isolated disks and disks of clusters whose coordinates lie inside simulation box
 for ii = 1:No_disks
     % bond formation and store ids of bonded disks
     for jj = 1:No_disks

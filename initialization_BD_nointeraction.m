@@ -21,7 +21,7 @@ for i = 1:steps
         [new_pos_s] = BoundaryCondition_disks(new_pos_s, XX, YY);
 
         % checking new_pos_s overlapping with other disks
-        [condition] = overlap_check(id, new_pos_s, dia_disk, sc);
+        [condition] = overlap_check_isolated_disks(id, new_pos_s, dia_disk, sc, XX, YY);
 
         if mean(condition) == 0   % no overlap and update position
             sc(id,:) = new_pos_s;
