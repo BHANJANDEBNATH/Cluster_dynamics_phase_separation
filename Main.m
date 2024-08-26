@@ -11,7 +11,7 @@ dia_disk = 5;     % in nm
 area_fraction = ((pi/4) * dia_disk^2 * No_disks) / (XX * YY);
 
 tau = 10^(-4);        % in seconds
-D_free_disk = 10^2;   % diffusivity in nm^2/s 
+D_free_disk = 10^3;   % diffusivity in nm^2/s 
 
 %% initial configuration generation
 [disk_id, disk_coordinates] = Generate_disk(XX, YY, No_disks, dia_disk);
@@ -45,7 +45,7 @@ disks_stat(:,3) = updated_coordinates(:,2);
 % Bond lifetimes
 alpha = 0.5;           % range 0 to 1.5
 lambda = 0.1;          % 0.1 to 2
-num_samples = 10000;   % Number of lifetimes to generate
+num_samples = 10;   % Number of lifetimes to generate
 [lifetimes_power, lifetimes_exponential] = distribution_bond_lifetime(alpha, lambda, num_samples);
 
 steps_lifetimes = lifetimes_power/tau;
@@ -66,7 +66,7 @@ for i = 1:No_timesteps
 
     curr_time = i;
     bond_form_prob = 0.8;  % bond formation probability
-    [updated_disks_stat, clusters_ids] = BD_disks_bond_dynamics(No_disks, disks_stat, XX, YY, dia_disk, tau, D_free_disk, bond_form_prob, bondpos, bond_lifetime, bond_formtime, steps_lifetimes, curr_time, ncols);
+    [updated_disks_stat, clusters_ids] = BD_disks_bond_dynamics(No_disks, disks_stat, XX, YY, dia_disk, tau, D_free_disk, bond_form_prob, bondpos, bond_lifetime, bond_formtime, steps_lifetimes, curr_time, ncols,ncol_bonds,ncol_bond_lifetime,ncol_bond_formtime);
     disks_stat = updated_disks_stat;
     
     % data sampling
@@ -83,8 +83,11 @@ for i = 1:No_timesteps
         % tracking how many time steps are elapsed
         disp(['No. time steps elapsed:' num2str(i/tic)]);
     end
-    
-   % Plot_disks_colors(No_disks, dia_disk, disks_stat, XX, YY, bondpos)
+
+   % for plotting 
+   disks_coord_plot = disks_stat;
+   % [disks_coord_plot] = disks_coord_simbox_plot(disks_stat,XX,YY);
+   Plot_disks_colors(No_disks, dia_disk, disks_coord_plot, XX, YY, bondpos)
 
 end
 
@@ -92,6 +95,8 @@ end
 % orange isolated disks
 % purple bonded disks
 
+% disks_coord_plot = disks_stat;
+% [disks_coord_plot] = disks_coord_simbox_plot(disks_stat,XX,YY);
 % Plot_disks_colors(No_disks, dia_disk, disks_stat, XX, YY, bondpos)
 
 

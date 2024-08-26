@@ -10,7 +10,7 @@ mean_yc = mean(cluster_y);
 
 % shifting positions of all disks in a cluster based on position of center of mass of the cluster
 
-if mean_xc <= 0
+if mean_xc < 0
     cluster_x = cluster_x + XX;
 end
 
@@ -18,7 +18,7 @@ if mean_xc > XX
     cluster_x = cluster_x - XX;
 end
 
-if mean_yc <= 0
+if mean_yc < 0
     cluster_y = cluster_y + YY;
 end
 

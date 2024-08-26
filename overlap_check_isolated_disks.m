@@ -16,14 +16,14 @@ for j  = 1:length(sc)
         
         % checking whether other disks are inside simulation box or not
         % in x direction
-        if x2 <= 0
+        if x2 < 0
            x2 = x2 + XX; 
         end
         if x2 > XX
            x2 = x2 - XX;
         end
         % in Y direction
-        if y2 <= 0
+        if y2 < 0
            y2 = y2 + YY; 
         end
         if y2 > YY

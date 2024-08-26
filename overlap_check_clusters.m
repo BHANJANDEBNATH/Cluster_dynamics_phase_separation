@@ -20,13 +20,13 @@ for i = 1:length(ids)
     
     % first shift coordiantes of disk inside simulation box
     % if the disk stays outside the box 
-    if posx <= 0
+    if posx < 0
         posx = posx + XX;
     end
     if posx > XX
         posx = posx - XX;
     end
-    if posy <= 0
+    if posy < 0
         posy = posy + YY;
     end
     if posy > YY
@@ -42,14 +42,14 @@ for i = 1:length(ids)
 
             % checking whether other disks are inside simulation box or not
             % in x direction
-            if xx2 <= 0
+            if xx2 < 0
                xx2 = xx2 + XX; 
             end
             if xx2 > XX
                xx2 = xx2 - XX;
             end
             % in Y direction
-            if yy2 <= 0
+            if yy2 < 0
                yy2 = yy2 + YY; 
             end
             if yy2 > YY
