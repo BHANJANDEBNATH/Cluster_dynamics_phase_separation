@@ -1,8 +1,9 @@
 
 % bond break based on lifetime
 
-function[disks_stat] = Bond_break_lifetime(aa,bondpos,disks_stat,bond_lifetime,bond_formtime,curr_time)
+function[disks_stat] = Bond_break_lifetime(ii,bondpos,disks_stat,bond_lifetime,bond_formtime,curr_time)
 
+    aa = ii;
     for bb = bondpos(1,1):1:bondpos(1,length(bondpos))
         if disks_stat(aa,bb) ~= 0 
             colid_lt = bb + length(bond_lifetime);
