@@ -23,8 +23,8 @@ function [neighborList] = NeighborListCreation(particles, boxSize, cutoff)
         cellX = min(floor(x / cellSize) + 1, numCellsX);
         cellY = min(floor(y / cellSize) + 1, numCellsY);
         
-        cells{cellX, cellY} = [cells{cellX, cellY}, i];
-        particleCells(i, :) = [cellX, cellY];
+        cells{cellX, cellY} = [cells{cellX, cellY}, i];  % storing particle ids in cells
+        particleCells(i, :) = [cellX, cellY];            % storing cell [rowid, columnid] corresponding to each particle
     end
     
     % Initialize neighbor list
@@ -49,19 +49,58 @@ function [neighborList] = NeighborListCreation(particles, boxSize, cutoff)
             neighbors = cells{neighborCellX, neighborCellY};
             for j = neighbors
                 if i ~= j
+
+                    % one way: dumping all disk ids in the neighboring cells inclding periodic images
+                    neighborList{i} = [neighborList{i}, j];
+
+                    %%%%%%
+                    % another way: dumping only those disk ids in the neighboring cells inclding periodic images
                     % Compute distance considering periodic boundaries
-                    dx = particles(j, 1) - x_i;
-                    dy = particles(j, 2) - y_i;
-                    dx = dx - round(dx / Lx) * Lx;  % Periodic boundary condition in x
-                    dy = dy - round(dy / Ly) * Ly;  % Periodic boundary condition in y
+                    % dx = abs(particles(j, 1) - x_i);
+                    % dy = abs(particles(j, 2) - y_i);
+                    % 
+                    % if particles(j,1) <= cutoff
+                    %     dx = min(dx, abs(Lx + particles(j,1) - x_i));
+                    % end
+                    % if particles(j,1) >= Lx-cutoff
+                    %     dx = min(dx, abs(particles(j,1) - x_i - Lx));
+                    % end
+                    % if particles(j,2) <= cutoff
+                    %     dy = min(dy, abs(Ly + particles(j,1) - x_i));
+                    % end
+                    % if particles(j,2) >= Ly-cutoff
+                    %     dy = min(dy, abs(particles(j,1) - x_i - Ly));
+                    % end
+                    % % dx = dx - round(dx / Lx) * Lx;  % Periodic boundary condition in x
+                    % % dy = dy - round(dy / Ly) * Ly;  % Periodic boundary condition in y
+                    % 
+                    % 
+                    % % Calculate distance
+                    % dist = sqrt(dx^2 + dy^2);
+                    % 
+                    % % If within the cutoff distance, add to the neighbor list
+                    % if dist <= cutoff
+                    %     neighborList{i} = [neighborList{i}, j];
+                    % end
+
+                    %%%%%%%
                     
-                    % Calculate distance
-                    dist = sqrt(dx^2 + dy^2);
+                    % another way: dumping only those disk ids in the neighboring cells inclding periodic images
+                    % who are  inside cutoff radius 
+                    % % Compute distance considering periodic boundaries
+                    % dx = particles(j, 1) - x_i;
+                    % dy = particles(j, 2) - y_i;
+                    % dx = dx - round(dx / Lx) * Lx;  % Periodic boundary condition in x
+                    % dy = dy - round(dy / Ly) * Ly;  % Periodic boundary condition in y
+                    % 
+                    % % Calculate distance
+                    % dist = sqrt(dx^2 + dy^2);
+                    % 
+                    % % If within the cutoff distance, add to the neighbor list
+                    % if dist <= cutoff
+                    %     neighborList{i} = [neighborList{i}, j];
+                    % end
                     
-                    % If within the cutoff distance, add to the neighbor list
-                    if dist <= cutoff
-                        neighborList{i} = [neighborList{i}, j];
-                    end
                 end
             end
         end

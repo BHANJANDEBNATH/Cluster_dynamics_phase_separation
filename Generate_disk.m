@@ -6,6 +6,10 @@ function [disk_id,disk_coordinates] = Generate_disk(XX,YY, No_disks, dia_disk)
 disk_coordinates = zeros(No_disks,2);
 disk_id = zeros(No_disks,1);
 
+XX = XX - dia_disk/2;
+YY = YY - dia_disk/2;
+
+
 id = 0;
 for i = 1:No_disks
 

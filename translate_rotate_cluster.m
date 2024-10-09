@@ -20,6 +20,7 @@ com = sum(unwrapped_tr, 1) / length(ids);
 
 % second, perform rotation
 for i = 1:size(unwrapped_positions,1)
+
     % Step 1: Translate point to center of rotation
     x_prime = unwrapped_tr(i,1) - com(1);
     y_prime = unwrapped_tr(i,2) - com(2);
@@ -31,6 +32,7 @@ for i = 1:size(unwrapped_positions,1)
     % Step 3: Translate point back to original position
     unwrapped_rot(i,1) = x_new + com(1);
     unwrapped_rot(i,2) = y_new + com(2);
+
 end
 
 % third, apply pbc to wrap coordinates inside simulation box
@@ -38,7 +40,7 @@ for i = 1:size(unwrapped_positions,1)
     x_tr_rot = unwrapped_rot(i,1);
     y_tr_rot = unwrapped_rot(i,2);
 
-    if x_tr_rot < pbc_xmin 
+    if x_tr_rot <= pbc_xmin 
         x_adjusted = x_tr_rot + pbc_xmax;
     elseif x_tr_rot > pbc_xmax
         x_adjusted = x_tr_rot - pbc_xmax;
@@ -46,7 +48,7 @@ for i = 1:size(unwrapped_positions,1)
         x_adjusted = x_tr_rot;
     end
     
-    if y_tr_rot < pbc_ymin 
+    if y_tr_rot <= pbc_ymin 
         y_adjusted = y_tr_rot + pbc_ymax;
     elseif y_tr_rot > pbc_ymax
         y_adjusted = y_tr_rot - pbc_ymax;

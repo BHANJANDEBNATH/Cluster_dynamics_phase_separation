@@ -5,17 +5,18 @@
 function[disks_stat] = BD_Clusters_pos_update(ids,cluster_disks_pos_old,disks_stat,D_free_disk,dia_disk,tau,XX,YY,neighborList)
 
         positions = cluster_disks_pos_old(:,2:3);
-        [rad_gyr,unwrapped_positions] = radius_gyration_pbc(ids,positions,XX,YY);
+        [rad_gyr,unwrapped_positions] = radius_gyration_pbc(ids,positions,XX,YY, dia_disk);
 
         % translational and rotational difusion coefficients of cluster
         tr_diff_cluster = D_free_disk * (dia_disk/2)/rad_gyr;
-        
-        rot_diff_cluster = (6/8) * tr_diff_cluster * (dia_disk/2) * (1/rad_gyr)^3;
+
+        rot_diff_cluster = (1/2) * tr_diff_cluster  * (1/rad_gyr)^2;
         
         % translate and rotate cluster
         dis_c = sqrt(2 * 1 * tr_diff_cluster * tau); 
         ds = dis_c * randn(1,2);                          
         theta_rad = sqrt(2 * 1 * rot_diff_cluster * tau) * randn(1,1);      % in radian
+        theta_rad = mod(theta_rad, 2 * pi);                                 % normalize angle to [0 2*pi]
       
         translate = [ds(1,1) ds(1,2)];
         rotate = theta_rad;
