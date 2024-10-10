@@ -20,8 +20,6 @@ for i = 1:length(ids)
         sc = [sc; disks_stat(neigh,1:3)];
     end
 
-
-    
     [r c] = size(sc);
     for j = 1:r
         if imp ~= sc(j,1)

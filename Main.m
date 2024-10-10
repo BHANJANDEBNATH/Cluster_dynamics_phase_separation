@@ -59,7 +59,7 @@ disks_stat(:,3) = updated_coordinates(:,2);
 %% Bond features and lifetimes
 alpha = 0.5;           % range 0 to 1.5
 lambda = 0.1;          % 0.1 to 2
-num_samples = 10;   % Number of lifetimes to generate
+num_samples = 20000;   % Number of lifetimes to generate
 [lifetimes_power, lifetimes_exponential] = distribution_bond_lifetime(alpha, lambda, num_samples);
 
 steps_lifetimes = lifetimes_power/tau;
@@ -70,9 +70,9 @@ steps_lifetimes = round(steps_lifetimes);
 %% Main: Run dynamics
 tic_loop = 10^3;
 
-tau = 10^(-3);            % in seconds
-D_free_disk = 10^2;       % diffusivity in nm^2/s 
-No_timesteps = 2 * 10^5;      
+tau = 10^(-5);            % in seconds
+D_free_disk = 10^4;       % diffusivity in nm^2/s 
+No_timesteps = 1 * 10^5;      
 del_t_sampling = 100;
 
 disks_stat_time = cell(No_timesteps/del_t_sampling,2);
@@ -81,11 +81,11 @@ clusters_stat_time = cell(No_timesteps/del_t_sampling,2);
 for i = 1:No_timesteps
 
     curr_time = i;
-    bond_form_prob = 0.8;  % bond formation probability
+    bond_form_prob = 0.5;  % bond formation probability
     dis_factor = 20;       % distance criteria for bond formation
 
     % generate neighborlist after every n time steps to reduce computation
-    n_list_steps = 5;
+    n_list_steps = 20;
     cutoff_factor = 3; 
     if mod(i,n_list_steps) == 0
         particles = disks_stat(:,2:3);
