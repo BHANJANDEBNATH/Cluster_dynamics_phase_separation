@@ -2,9 +2,9 @@
 % bond life time generation
 
 % Parameters
-alpha = 0.5;
-lambda = 0.1;
-num_samples = 1000; % Number of lifetimes to generate
+alpha = 1;
+lambda = 0.5;
+num_samples = 20000; % Number of lifetimes to generate
 
 % Define the equation to solve for t for the truncated power law
 inverse_cdf_power_law = @(U, alpha, lambda) fsolve(@(t) t^(-alpha) * exp(-lambda * t) - (1 - U), 1.0);

@@ -5,17 +5,25 @@ tic;
 % Main file 2D simulation of disks
 
 %% simulation box dimensions and other parameters
-XX = 150;         % Height in nm 
-YY = 150;         % Width  in nm 
-No_disks = 50;
-dia_disk = 10;     % in nm
-area_fraction = ((pi/4) * dia_disk^2 * No_disks) / (XX * YY);
+% XX = 275;           % Height in nm 
+% YY = 275;           % Width  in nm 
+
+No_disks = 100;
+dia_disk = 10;        % in nm
+% area_fraction = ((pi/4) * dia_disk^2 * No_disks) / (XX * YY);
+
+area_fraction = 0.1;      % change area fraction
+
+XX = ((No_disks * pi/4 * dia_disk^2)/area_fraction)^0.5;
+XX = round(XX);
+YY = XX;
+number_bonds = 3;   % number of bonds
 
 %% initial configuration generation
 [disk_id, disk_coordinates] = Generate_disk(XX, YY, No_disks, dia_disk);
 % Initialization: run BD for a few time steps with out interaction and use the updated
 steps = 1000;
-tau = 10^(-4);        % in seconds
+tau = 10^(-5);        % in seconds
 D_free_disk = 10;   % diffusivity in nm^2/s 
 [updated_coordinates] = initialization_BD_nointeraction(disk_coordinates, XX, YY, dia_disk, tau, D_free_disk, steps, No_disks);
 % neighborlist initialization
@@ -33,7 +41,7 @@ cutoff = 3 * dia_disk;
 
 ncol_id = 1;
 ncol_pos = 2;      % for two dimensions
-ncol_bonds = 3;    % allowing maximum number of bonds
+ncol_bonds = number_bonds;    % maximum number of bonds
 ncol_bond_lifetime = ncol_bonds;   % columns to save bond lifetimes of each bond
 ncol_bond_formtime = ncol_bonds;   % columns to save bond formtimes of each bond
 
@@ -57,33 +65,38 @@ disks_stat(:,2) = updated_coordinates(:,1);
 disks_stat(:,3) = updated_coordinates(:,2);
 
 %% Bond features and lifetimes
-alpha = 0.5;           % range 0 to 1.5
 lambda = 0.1;          % 0.1 to 2
+alpha = 0.5;           % range 0 to 1.5
 num_samples = 20000;   % Number of lifetimes to generate
 [lifetimes_power, lifetimes_exponential] = distribution_bond_lifetime(alpha, lambda, num_samples);
 
-steps_lifetimes = lifetimes_power/tau;
+simulation_timestep = 10^(-5);            % in seconds 
+
+% power-law
+% steps_lifetimes = lifetimes_power/simulation_timestep;
+% steps_lifetimes = round(steps_lifetimes);
+
+% exponential
+steps_lifetimes = lifetimes_exponential/simulation_timestep;
 steps_lifetimes = round(steps_lifetimes);
-%steps_lifetimes = lifetimes_exponential/tau;
-%steps_lifetimes = round(steps_lifetimes);
 
 %% Main: Run dynamics
 tic_loop = 10^3;
 
-tau = 10^(-5);            % in seconds
-D_free_disk = 10^4;       % diffusivity in nm^2/s 
-No_timesteps = 1 * 10^5;      
+tau = simulation_timestep;    % simulation time step in seconds
+D_free_disk = 10^4;           % diffusivity in nm^2/s 
+No_timesteps = 60 * 10^5;      
 del_t_sampling = 100;
 
 disks_stat_time = cell(No_timesteps/del_t_sampling,2);
 clusters_stat_time = cell(No_timesteps/del_t_sampling,2);
 
 for i = 1:No_timesteps
-
+  
     curr_time = i;
     bond_form_prob = 0.5;  % bond formation probability
     dis_factor = 20;       % distance criteria for bond formation
-
+    
     % generate neighborlist after every n time steps to reduce computation
     n_list_steps = 20;
     cutoff_factor = 3; 
@@ -97,47 +110,39 @@ for i = 1:No_timesteps
     % BD simulation of isolated disks, clusters, and bond formation-breakage dynamics
     [updated_disks_stat, clusters_ids] = BD_disks_bond_dynamics(No_disks, disks_stat, XX, YY, dia_disk, tau, D_free_disk, bond_form_prob, bondpos, bond_lifetime, bond_formtime, steps_lifetimes, curr_time, ncols,ncol_bonds,ncol_bond_lifetime,ncol_bond_formtime,dis_factor,neighborList);
     disks_stat = updated_disks_stat;
-
+    
     % data dumping
     if mod(i,del_t_sampling) == 0
         disks_stat_time{i/del_t_sampling,1} = i;
         disks_stat_time{i/del_t_sampling,2} = disks_stat;
-
+   
         clusters_stat_time{i/del_t_sampling,1} = i;
         clusters_stat_time{i/del_t_sampling,2} = clusters_ids;
     end
     disks_coord_plot = disks_stat;
-
+    
     % checking time elapsed for loop 
     if mod(i,tic_loop) == 0
         disp(['No. time steps elapsed:' num2str(i/tic_loop)]);
     end
-
-    % Plot_disks_colors(No_disks, dia_disk, disks_coord_plot, XX, YY, bondpos)
-    % Plot_disks_colors_with_images(No_disks, dia_disk, disks_coord_plot, XX, YY, bondpos)
-  
+    
+    % save workspace after every 10 seconds interval
+    if mod(i, (10^4 * del_t_sampling)) == 0
+        outputname = ['sim_' num2str(i) '.mat'];     % change the name of file
+        save(outputname)
+    end
+     
 end
 
-%% plotting (orange isolated disks) (purple bonded disks)
-figure(1)
-Plot_disks_colors(No_disks, dia_disk, disks_coord_plot, XX, YY, bondpos)
 
-% plotting with periodic boxes
-figure(2)
-Plot_disks_colors_with_images(No_disks, dia_disk, disks_coord_plot, XX, YY, bondpos)
+%% plotting (orange isolated disks) (purple bonded disks)
+% figure(1)
+% Plot_disks_colors(No_disks, dia_disk, disks_coord_plot, XX, YY, bondpos)
+% 
+% % plotting with periodic boxes
+% figure(2)
+% Plot_disks_colors_with_images(No_disks, dia_disk, disks_coord_plot, XX, YY, bondpos)
 
 elapsedTime = toc;
 fprintf('Elapsed time: %.2f seconds\n', elapsedTime);
-
-
-
-
-
-
-
-
-
-
-
-
 
