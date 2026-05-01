@@ -8,7 +8,7 @@ rng('shuffle')
 
 %% simulation box dimensions and other parameters
 
-No_disks = 200;
+No_disks = 400;
 dia_disk = 10;        % in nm
 area_fraction = 0.05;      % change area fraction
 XX = ((No_disks * pi/4 * dia_disk^2)/area_fraction)^0.5;
